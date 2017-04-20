@@ -1,6 +1,7 @@
 #include "widget.h"
 #include "ui_widget.h"
 #include "gamewindow.h"
+#include "highscore.h"
 
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
@@ -25,13 +26,16 @@ void Widget::on_Exit_clicked()
 
 void Widget::on_HighScores_clicked()
 {
+    HighScore* hs = new HighScore();
+    hs->setAttribute(Qt::WA_DeleteOnClose);
+    hs->setStyleSheet("background-color: black;");
+    hs->show();
 
 }
 
 void Widget::on_StartGame_clicked()
 {
     GameWindow* gw = new GameWindow();
-    //Background = black or image
     gw->setStyleSheet("background-color: black;");
     gw->show();
     gw->setAttribute(Qt::WA_DeleteOnClose);

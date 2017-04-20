@@ -14,9 +14,12 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         widget.cpp \
-    gamewindow.cpp
+    gamewindow.cpp \
+    highscore.cpp
 
 HEADERS  += widget.h \
-    gamewindow.h
+    gamewindow.h \
+    highscore.h
 
-FORMS    += widget.ui
+FORMS    += widget.ui \
+    highscore.ui
