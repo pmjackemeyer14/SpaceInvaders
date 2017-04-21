@@ -16,7 +16,6 @@ HighScore::HighScore(QWidget *parent) :
     //Display top 10 scores
     ui->tableWidget->setRowCount(10);
     ui->tableWidget->setColumnCount(2);
-    ui->tableWidget->setStyleSheet("background-color: grey;color : yellow;");
     QVector <QTableWidgetItem*> names;
     QVector <QTableWidgetItem*> scores;
     //Load high scores from JSON file

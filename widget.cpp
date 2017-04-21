@@ -11,6 +11,12 @@ Widget::Widget(QWidget *parent) :
     ui->StartGame->setStyleSheet("background-color: grey;color : yellow;");
     ui->Exit->setStyleSheet("background-color: grey;color : yellow;");
     ui->HighScores->setStyleSheet("background-color: grey;color : yellow;");
+    QPixmap* mp = new QPixmap("../SpaceInvaders/SPACE_INVADERS.gif");
+    ui->label->setPixmap(*mp);
+    //ui->label->setAlignment(Qt::AlignHCenter);
+    ui->label->setScaledContents(true);
+    //ui->verticalLayout->setAlignment(this->window(),Qt::AlignHCenter);
+
 
 }
 
