@@ -9,10 +9,12 @@ GameWindow::GameWindow(QWidget *parent) : QWidget(parent)
 
 void GameWindow::paintEvent(QPaintEvent *e)
 {
+    QPainter* paint = new QPainter(this);
     QRect r;
-    r.setCoords(20,40,20,80);
-    QPainter p;
-    p.drawRect(r);
+    QColor color2 = QColor(76,230,23);
+    r.setCoords(20,40,60,80);
+    paint->drawRect(r);
+    paint->fillRect(r,color2);
 
 }
 
