@@ -42,6 +42,8 @@ void Widget::on_HighScores_clicked()
 void Widget::on_StartGame_clicked()
 {
     GameWindow* gw = new GameWindow();
+    gw->setMinimumWidth(660);
+    gw->setMaximumWidth(660);
     gw->setStyleSheet("background-color: black;");
     gw->show();
     gw->setAttribute(Qt::WA_DeleteOnClose);
