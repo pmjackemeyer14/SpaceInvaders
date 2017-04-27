@@ -5,6 +5,7 @@
 #include <QKeyEvent>
 #include <QDebug>
 #include <QMessageBox>
+#include "alien.h"
 
 GameWindow::GameWindow(QWidget *parent) : QWidget(parent)
 {
@@ -18,8 +19,8 @@ GameWindow::GameWindow(QWidget *parent) : QWidget(parent)
     ship_timer = new QTimer();
     alien_timer = new QTimer();
     connect(alien_timer,SIGNAL(timeout()),this,SLOT(updateAlienCoordinates()));
-    connect(bullet_timer,SIGNAL(timeout()),this,SLOT(updateBulletCoordinates()));
-    connect(ship_timer,SIGNAL(timeout()),this,SLOT(updateShipCoordinates()));
+    //connect(bullet_timer,SIGNAL(timeout()),this,SLOT(updateBulletCoordinates()));
+    //connect(ship_timer,SIGNAL(timeout()),this,SLOT(updateShipCoordinates()));
     alien_timer->start();
     alien_timer->setInterval(2000);
     ship_timer->start();
@@ -28,38 +29,8 @@ GameWindow::GameWindow(QWidget *parent) : QWidget(parent)
     bullet_xcord = 0;
     bullet_ycord = this->height()-10;
     ship_xcord = this->width()/2;
-    int xtemp = 0;
-    int ytemp = 60;
-    for(int i = 0;i<55;i++)
-    {
-        alienDestroyed[i] = 0;
-        if(i<11)
-        {
-           alien_ycord[i] = ytemp;
-        }else if(i >= 11 && i < 22)
-        {
-           alien_ycord[i] = ytemp+40;
-        }else if(i >= 22 && i < 33)
-        {
-           alien_ycord[i] = ytemp+80;
-        }else if(i >= 33 && i < 44)
-        {
-           alien_ycord[i] = ytemp+120;
-        }else
-        {
-           alien_ycord[i] = ytemp+160;
-        }
+    aliens = new Alien(this);
 
-    }
-    for(int i = 0;i<11;i++)
-    {
-        int k = i;
-        for(k; k < 55;k+=11)
-        {
-            alien_xcord[k] = xtemp;
-        }
-        xtemp+=40;
-    }
 
 
 }
@@ -68,7 +39,7 @@ void GameWindow::paintEvent(QPaintEvent *e)
 {
     QPainter* paint = new QPainter(this);
     drawPlayerShip(paint);
-    drawEnemyShips(paint);
+    aliens->drawAlien(*paint);
     if(shotFired)
     {
         fireShot(paint);
@@ -130,56 +101,40 @@ void GameWindow::drawPlayerShip(QPainter *paint)
     paint->fillRect(r,color2);
 }
 
-void GameWindow::drawEnemyShips(QPainter *paint)
-{
-    QRect r[55];
-    QColor color3 = QColor(230,230,23);
-    for(int i = 0; i<55;i++)
-    {
-        qDebug()<<"WIDTH: "<<this->width();
-        if(alienDestroyed[i] == 1)
-        {
-            continue;
-        }
-        r[i].setCoords(alien_xcord[i],alien_ycord[i],alien_xcord[i]+20,alien_ycord[i]-20);
-        paint->drawRect(r[i]);
-        paint->fillRect(r[i],color3);
-    }
 
-}
 
 void GameWindow::updateBulletCoordinates()
 {
-    bullet_ycord-=10;
-    if(bullet_ycord<0)
-    {
-        bulletDestroyed = true;
-        bullet_timer->stop();
-        shotFired = false;
-        bullet_ycord = this->height()-10;
-    }
-    int offset = 0;
-    if(alienDirection == 1)
-    {
-        offset = -10;
-    }else
-    {
-        offset = 10;
-    }
-    for(int i = 0; i<55;i++)
-    {
-        if(bullet_ycord==alien_ycord[i] && bullet_xcord-alien_xcord[i] <= offset)
-        {
-            bulletDestroyed = true;
-            bullet_timer->stop();
-            shotFired = false;
-            bullet_ycord = this->height()-10;
-            alien_ycord[i] = 0;
-            alienDestroyed[i] = 1;
-        }
-    }
-    firstFire = false;
-    this->update();
+//    bullet_ycord-=10;
+//    if(bullet_ycord<0)
+//    {
+//        bulletDestroyed = true;
+//        bullet_timer->stop();
+//        shotFired = false;
+//        bullet_ycord = this->height()-10;
+//    }
+//    int offset = 0;
+//    if(alienDirection == 1)
+//    {
+//        offset = -10;
+//    }else
+//    {
+//        offset = 10;
+//    }
+//    for(int i = 0; i<55;i++)
+//    {
+//        if(bullet_ycord==alien_ycord[i] && bullet_xcord-alien_xcord[i] <= offset)
+//        {
+//            bulletDestroyed = true;
+//            bullet_timer->stop();
+//            shotFired = false;
+//            bullet_ycord = this->height()-10;
+//            alien_ycord[i] = 0;
+//            alienDestroyed[i] = 1;
+//        }
+//    }
+//    firstFire = false;
+//    this->update();
 }
 
 void GameWindow::updateShipCoordinates()
@@ -197,91 +152,7 @@ void GameWindow::updateShipCoordinates()
 
 void GameWindow::updateAlienCoordinates()
 {
-    int max = 0;
-    for(int i = 0; i<55; i++)
-    {
-     if(alien_ycord[i] > max)
-     {
-         max = alien_ycord[i];
-     }
-    }
-
-    if(alienDirection == 2)
-    {
-
-        if(alien_xcord[10]+40>=this->width())
-        {
-            for(int i=0; i<55; i++)
-            {
-                if(alienDestroyed[i] == 1)
-                {
-                    continue;
-                }else
-                {
-                   alien_ycord[i]+=40;
-                }
-
-            }
-            alienDirection = 1;
-        }else if(max>=this->height()-30)
-        {
-            alien_timer->stop();
-            QMessageBox m;
-            m.setText("GAME OVER");
-            m.exec();
-
-        }else
-        {
-            for(int i=0; i<55; i++)
-            {
-                if(alienDestroyed[i] == 1)
-                {
-                    continue;
-                }else
-                {
-                   alien_xcord[i]+=40;
-                }
-
-            }
-        }
-
-    }else if(alienDirection == 1)
-    {
-        if(alien_xcord[0]<=10)
-        {
-            for(int i=0; i<55; i++)
-            {
-                if(alienDestroyed[i] == 1)
-                {
-                    continue;
-                }else
-                {
-                   alien_ycord[i]+=40;
-                }
-
-            }
-            alienDirection = 2;
-        }else if(max>=this->height()-30)
-        {
-            alien_timer->stop();
-            QMessageBox m;
-            m.setText("GAME OVER");
-            m.exec();
-        }else
-        {
-            for(int i=0; i<55; i++)
-            {
-                if(alienDestroyed[i] == 1)
-                {
-                    continue;
-                }else
-                {
-                   alien_xcord[i]-=40;
-                }
-
-            }
-        }
-    }
+    aliens->updateCoordindates();
     this->update();
 }
 

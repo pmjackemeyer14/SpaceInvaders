@@ -2,6 +2,7 @@
 #define GAMEWINDOW_H
 
 #include <QWidget>
+#include "alien.h"
 
 class GameWindow : public QWidget
 {
@@ -33,9 +34,7 @@ private:
     int bullet_xcord;
     int bullet_ycord;
     int ship_xcord;
-    int alien_xcord[55];
-    int alien_ycord[55];
-    int alienDestroyed[55];
+    Alien* aliens;
     QTimer* bullet_timer;
     QTimer* ship_timer;
     QTimer* alien_timer;
