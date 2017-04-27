@@ -35,6 +35,7 @@ private:
     int ship_xcord;
     int alien_xcord[55];
     int alien_ycord[55];
+    int alienDestroyed[55];
     QTimer* bullet_timer;
     QTimer* ship_timer;
     QTimer* alien_timer;

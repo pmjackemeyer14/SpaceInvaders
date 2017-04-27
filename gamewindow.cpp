@@ -21,10 +21,10 @@ GameWindow::GameWindow(QWidget *parent) : QWidget(parent)
     connect(bullet_timer,SIGNAL(timeout()),this,SLOT(updateBulletCoordinates()));
     connect(ship_timer,SIGNAL(timeout()),this,SLOT(updateShipCoordinates()));
     alien_timer->start();
-    alien_timer->setInterval(1000);
+    alien_timer->setInterval(2000);
     ship_timer->start();
     ship_timer->setInterval(50);
-    bullet_timer->setInterval(100);
+    bullet_timer->setInterval(50);
     bullet_xcord = 0;
     bullet_ycord = this->height()-10;
     ship_xcord = this->width()/2;
@@ -32,6 +32,7 @@ GameWindow::GameWindow(QWidget *parent) : QWidget(parent)
     int ytemp = 60;
     for(int i = 0;i<55;i++)
     {
+        alienDestroyed[i] = 0;
         if(i<11)
         {
            alien_ycord[i] = ytemp;
@@ -136,6 +137,10 @@ void GameWindow::drawEnemyShips(QPainter *paint)
     for(int i = 0; i<55;i++)
     {
         qDebug()<<"WIDTH: "<<this->width();
+        if(alienDestroyed[i] == 1)
+        {
+            continue;
+        }
         r[i].setCoords(alien_xcord[i],alien_ycord[i],alien_xcord[i]+20,alien_ycord[i]-20);
         paint->drawRect(r[i]);
         paint->fillRect(r[i],color3);
@@ -152,6 +157,26 @@ void GameWindow::updateBulletCoordinates()
         bullet_timer->stop();
         shotFired = false;
         bullet_ycord = this->height()-10;
+    }
+    int offset = 0;
+    if(alienDirection == 1)
+    {
+        offset = -10;
+    }else
+    {
+        offset = 10;
+    }
+    for(int i = 0; i<55;i++)
+    {
+        if(bullet_ycord==alien_ycord[i] && bullet_xcord-alien_xcord[i] <= offset)
+        {
+            bulletDestroyed = true;
+            bullet_timer->stop();
+            shotFired = false;
+            bullet_ycord = this->height()-10;
+            alien_ycord[i] = 0;
+            alienDestroyed[i] = 1;
+        }
     }
     firstFire = false;
     this->update();
@@ -172,16 +197,33 @@ void GameWindow::updateShipCoordinates()
 
 void GameWindow::updateAlienCoordinates()
 {
+    int max = 0;
+    for(int i = 0; i<55; i++)
+    {
+     if(alien_ycord[i] > max)
+     {
+         max = alien_ycord[i];
+     }
+    }
+
     if(alienDirection == 2)
     {
+
         if(alien_xcord[10]+40>=this->width())
         {
             for(int i=0; i<55; i++)
             {
-                alien_ycord[i]+=40;
+                if(alienDestroyed[i] == 1)
+                {
+                    continue;
+                }else
+                {
+                   alien_ycord[i]+=40;
+                }
+
             }
             alienDirection = 1;
-        }else if(alien_ycord[44]>=this->height()-30)
+        }else if(max>=this->height()-30)
         {
             alien_timer->stop();
             QMessageBox m;
@@ -192,7 +234,14 @@ void GameWindow::updateAlienCoordinates()
         {
             for(int i=0; i<55; i++)
             {
-                alien_xcord[i]+=40;
+                if(alienDestroyed[i] == 1)
+                {
+                    continue;
+                }else
+                {
+                   alien_xcord[i]+=40;
+                }
+
             }
         }
 
@@ -202,10 +251,17 @@ void GameWindow::updateAlienCoordinates()
         {
             for(int i=0; i<55; i++)
             {
-                alien_ycord[i]+=40;
+                if(alienDestroyed[i] == 1)
+                {
+                    continue;
+                }else
+                {
+                   alien_ycord[i]+=40;
+                }
+
             }
             alienDirection = 2;
-        }else if(alien_ycord[44]>=this->height()-30)
+        }else if(max>=this->height()-30)
         {
             alien_timer->stop();
             QMessageBox m;
@@ -215,7 +271,14 @@ void GameWindow::updateAlienCoordinates()
         {
             for(int i=0; i<55; i++)
             {
-                alien_xcord[i]-=40;
+                if(alienDestroyed[i] == 1)
+                {
+                    continue;
+                }else
+                {
+                   alien_xcord[i]-=40;
+                }
+
             }
         }
     }
