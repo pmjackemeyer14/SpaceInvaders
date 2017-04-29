@@ -3,6 +3,8 @@
 
 #include <QWidget>
 #include "alien.h"
+#include "bullet.h"
+#include "playership.h"
 
 class GameWindow : public QWidget
 {
@@ -12,9 +14,7 @@ public:
     void paintEvent(QPaintEvent* e);
     void keyPressEvent(QKeyEvent* ev);
     void keyReleaseEvent(QKeyEvent* ev);
-    void fireShot(QPainter *paint);
     void drawPlayerShip(QPainter *paint);
-    void drawEnemyShips(QPainter * paint);
 
 signals:
 
@@ -27,14 +27,9 @@ private slots:
 
 private:
     bool shotFired;
-    bool firstFire;
-    bool bulletDestroyed;
-    int direction;// 0 = Stop, 1 = Left, 2 = Right
-    int alienDirection;// 1 = Left, 2 = Right
-    int bullet_xcord;
-    int bullet_ycord;
-    int ship_xcord;
     Alien* aliens;
+    Bullet* bullet;
+    PlayerShip* ship;
     QTimer* bullet_timer;
     QTimer* ship_timer;
     QTimer* alien_timer;
