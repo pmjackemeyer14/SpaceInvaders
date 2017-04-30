@@ -1,11 +1,13 @@
 #include "alien.h"
 #include <QDebug>
 #include <QPainter>
+#include <QMessageBox>
 
 
-Alien::Alien(QWidget *parent):parent(parent)
+Alien::Alien(QWidget *parent, Bullet *bullet):parent(parent),bullet(bullet)
 {
     alienDirection = 2;
+    gameOver = false;
     int xtemp = 0;
     int ytemp = 60;
     boundBox_xcord = 0;
@@ -49,10 +51,10 @@ Alien::Alien(QWidget *parent):parent(parent)
 void Alien::drawAlien(QPainter &paint)
 {
     QColor alienColor = QColor(230,230,23);
-    QColor bbcolor = QColor(0,0,0);
+    //QColor bbcolor = QColor(0,0,0);
     boundingBox.setCoords(boundBox_xcord,boundBox_ycord,boundBox_xcord+420,boundBox_ycord+180);
     paint.drawRect(boundingBox);
-    paint.fillRect(boundingBox,bbcolor);
+    //paint.fillRect(boundingBox,bbcolor);
     for(int i = 0; i<55;i++)
     {
         if(alienDestroyed[i] == 1)
@@ -74,14 +76,7 @@ void Alien::drawAlien(QPainter &paint)
 
 void Alien::updateCoordindates()
 {
-        int max = 0;
-        for(int i = 0; i<55; i++)
-        {
-         if(ycord[i] > max)
-         {
-             max = ycord[i];
-         }
-        }
+
 
         if(alienDirection == 2)
         {
@@ -147,4 +142,37 @@ void Alien::updateCoordindates()
                 boundBox_xcord -= 40;
             }
         }
+
+        int max = 0;
+        for(int i = 0; i<55; i++)
+        {
+         if(ycord[i] > max)
+         {
+             max = ycord[i];
+         }
+        }
+        qDebug()<<"MAX: "<<max;
+        if(max >= parent->height()-20)
+        {
+            gameOver = true;
+        }
+}
+
+void Alien::checkforCollisions()
+{
+    for(int i = 0; i<55; i++)
+    {
+        if(bullet->getBulletRect().intersects(aliens[i]))
+        {
+            alienDestroyed[i] = 1;
+            xcord[i] = 0;
+            ycord[i] = 0;
+            bullet->setCollision(true);
+        }
+    }
+}
+
+bool Alien::getGameOver()
+{
+    return this->gameOver;
 }

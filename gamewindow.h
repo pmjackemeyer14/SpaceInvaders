@@ -24,6 +24,7 @@ private slots:
     void updateBulletCoordinates();
     void updateShipCoordinates();
     void updateAlienCoordinates();
+    void collisionCheck();
 
 private:
     bool shotFired;
@@ -33,6 +34,7 @@ private:
     QTimer* bullet_timer;
     QTimer* ship_timer;
     QTimer* alien_timer;
+    QTimer* collision_timer;
 };
 
 #endif // GAMEWINDOW_H

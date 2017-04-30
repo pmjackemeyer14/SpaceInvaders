@@ -1,4 +1,5 @@
 #include "playership.h"
+#include <QDebug>
 
 PlayerShip::PlayerShip(QWidget *parent):parent(parent)
 {

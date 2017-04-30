@@ -9,12 +9,16 @@ public:
     void drawBullet(QPainter& paint);
     void updateCoordinates();
     void setShipXCord(int x);
+    void setCollision(bool collision);
     bool getBulletDestroyed();
+    bool getBulletCollision();
     int getBulletYCord();
+    QRect getBulletRect();
 private:
     QWidget* parent;
     QRect bullet;
     bool bulletDestroyed;
+    bool collision;
     bool initialShot;
     int ycord;
     int xcord;

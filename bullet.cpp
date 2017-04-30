@@ -5,6 +5,7 @@
 Bullet::Bullet(QWidget *parent):parent(parent)
 {
     bulletDestroyed = true;
+    collision = false;
     initialShot = true;
     xcord = 0;
     ycord = parent->height()-10;
@@ -29,8 +30,9 @@ void Bullet::drawBullet(QPainter &paint)
 void Bullet::updateCoordinates()
 {
         ycord-=10;
-        if(ycord <= 0)
+        if(ycord <= 0 || collision)
         {
+            collision = false;
             bulletDestroyed = true;
             initialShot = true;
             ycord = parent->height()-10;
@@ -62,12 +64,27 @@ void Bullet::setShipXCord(int x)
     this->shipXCord = x;
 }
 
+void Bullet::setCollision(bool collision)
+{
+    this->collision = collision;
+}
+
 bool Bullet::getBulletDestroyed()
 {
     return this->bulletDestroyed;
 }
 
+bool Bullet::getBulletCollision()
+{
+    return this->collision;
+}
+
 int Bullet::getBulletYCord()
 {
     return this->ycord;
+}
+
+QRect Bullet::getBulletRect()
+{
+    return this->bullet;
 }
