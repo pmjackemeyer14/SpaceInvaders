@@ -55,7 +55,9 @@ Alien::Alien(QWidget *parent, Bullet *bullet):parent(parent),bullet(bullet)
 
 void Alien::drawAlien(QPainter &paint)
 {
-    QColor alienColor = QColor(230,230,23);
+    QColor hardAlienColor = QColor(230,230,23);
+    QColor mediumAlienColor = QColor(205,0,205);
+    QColor easyAlienColor = QColor(205,0,120);
     boundingBox.setCoords(boundBox_xcord,boundBox_ycord,boundBox_xcord+420,boundBox_ycord+180);
     paint.drawRect(boundingBox);
     for(int i = 0; i<55;i++)
@@ -70,7 +72,16 @@ void Alien::drawAlien(QPainter &paint)
             {
                 aliens[i].setCoords(xcord[i],ycord[i],xcord[i]+20,ycord[i]-20);
                 paint.drawRect(aliens[i]);
-                paint.fillRect(aliens[i],alienColor);
+                if(i < 11)
+                {
+                    paint.fillRect(aliens[i],hardAlienColor);
+                }else if(i >= 11 && i<33)
+                {
+                    paint.fillRect(aliens[i],mediumAlienColor);
+                }else{
+                    paint.fillRect(aliens[i],easyAlienColor);
+                }
+
             }
         }
 
@@ -161,18 +172,21 @@ void Alien::updateCoordindates()
         }
 }
 
-void Alien::checkforCollisions()
+int Alien::checkforCollisions()
 {
+    int indexOfShipdestroyed = -1;
     for(int i = 0; i<55; i++)
     {
         if(bullet->getBulletRect().intersects(aliens[i]))
         {
+            indexOfShipdestroyed = i;
             alienDestroyed[i] = 1;
             xcord[i] = 0;
             ycord[i] = 0;
             bullet->setCollision(true);
         }
     }
+    return indexOfShipdestroyed;
 }
 
 bool Alien::getGameOver()

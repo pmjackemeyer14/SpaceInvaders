@@ -17,6 +17,7 @@ public:
     void keyPressEvent(QKeyEvent* ev);
     void keyReleaseEvent(QKeyEvent* ev);
     void drawPlayerShip(QPainter *paint);
+    void updateHighScores(QString name);
 
 signals:
 
@@ -41,6 +42,7 @@ private:
     QTimer* alien_timer;
     QTimer* collision_timer;
     QTimer* alienBulletTimer;
+    int playerScore;
 };
 
 #endif // GAMEWINDOW_H

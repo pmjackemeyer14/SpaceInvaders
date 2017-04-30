@@ -6,10 +6,16 @@
 #include <QDebug>
 #include <QMessageBox>
 #include "alien.h"
-
+#include <QFile>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QInputDialog>
+#include <QDir>
 
 GameWindow::GameWindow(QWidget *parent) : QWidget(parent)
 {
+    playerScore = 0;
     shotFired = false;
     bullet_timer = new QTimer();
     ship_timer = new QTimer();
@@ -36,6 +42,7 @@ GameWindow::GameWindow(QWidget *parent) : QWidget(parent)
 
 void GameWindow::paintEvent(QPaintEvent *e)
 {
+    QColor textColor = QColor(255,0,0);
     QPainter* paint = new QPainter(this);
     aliens->drawAlien(*paint);
     alienBullet->drawAlienBullets(*paint);
@@ -45,6 +52,12 @@ void GameWindow::paintEvent(QPaintEvent *e)
     {
         bullet->drawBullet(*paint);
     }
+    QString score = "Score: ";
+    QString num = num.number(playerScore);
+    score.append(num);
+    QPen penHText(textColor);
+    paint->setPen(penHText);
+    paint->drawText(25,20,score);
 
 }
 
@@ -78,13 +91,85 @@ void GameWindow::keyReleaseEvent(QKeyEvent *ev)
     }
 }
 
+void GameWindow::updateHighScores(QString name)
+{
+    QFile HighScoreSaveFile("../SpaceInvaders/SpaceInvaders_HighScores.json");
+    if(!HighScoreSaveFile.open(QIODevice::ReadOnly))
+    {
+        qWarning("Could not open last High Score save file");
+        this->close();
+        return;
+    }
+    QByteArray hsSave = HighScoreSaveFile.readAll();
+    QJsonDocument hsDoc = QJsonDocument::fromJson(hsSave);
+    QJsonObject hsObj = hsDoc.object();
+    QJsonArray nameArray = hsObj["name"].toArray();
+    QJsonArray scoreArray = hsObj["score"].toArray();
+    int size = nameArray.size();
+    int index;
+    int min = INT_MAX;
+    HighScoreSaveFile.remove();
+    QFile newHSsaveFile("../SpaceInvaders/SpaceInvaders_HighScores.json");
+    if(!newHSsaveFile.open(QIODevice::WriteOnly))
+    {
+        qWarning("Could not open last High Score save file");
+        this->close();
+        return;
+    }
+    //Find lowest value of the 10
+    for(int i = 0; i < size; i++)
+    {
+        if(scoreArray.at(i).toInt()< min)
+        {
+            min = scoreArray.at(i).toInt();
+            index = i;
+        }
+    }
+    //If there are less than 10 high scores add score to high score list
+    if(size < 10)
+    {
+        nameArray.insert(index,name);
+        scoreArray.insert(index,playerScore);
+    }
+    else
+    {
+        //If high score is greater than lowest value on high score list it is added to the high score list
+        if(playerScore > min)
+        {
+            nameArray.removeAt(index);
+            scoreArray.removeAt(index);
+            nameArray.insert(index,name);
+            scoreArray.insert(index,playerScore);
+        }
+    }
+    //Write the JSON file
+    hsObj["name"] = nameArray;
+    hsObj["score"] = scoreArray;
+    QJsonDocument nhsDoc;
+    nhsDoc.setObject(hsObj);
+    newHSsaveFile.write(nhsDoc.toJson());
+    newHSsaveFile.flush();
+    newHSsaveFile.close();
+}
+
 
 void GameWindow::updateBulletCoordinates()
 {
-    aliens->checkforCollisions();
+    int shipIndex = aliens->checkforCollisions();
     barrier->CheckforCollisions();
     if(bullet->getBulletYCord()<20 || bullet->getBulletCollision() )
     {
+        //alienBullet->setBulletCoordinates(aliens->getAlienBulletX(),aliens->getAlienBulletY());
+        if(shipIndex>=0 && shipIndex <11)
+        {
+            playerScore+=100;
+        }else if(shipIndex>=11 && shipIndex < 33)
+        {
+            playerScore+=25;
+        }else if(shipIndex>=33 && shipIndex < 55)
+        {
+            playerScore+=10;
+        }
         bullet_timer->stop();
         shotFired = false;
     }
@@ -97,6 +182,7 @@ void GameWindow::updateShipCoordinates()
     ship->checkForCollisions();
     if(ship->getGameOver())
     {
+        bool ok;
         alien_timer->stop();
         ship_timer->stop();
         bullet_timer->stop();
@@ -104,6 +190,12 @@ void GameWindow::updateShipCoordinates()
         QMessageBox mBox;
         mBox.setText("GAME OVER");
         mBox.exec();
+        QInputDialog d(this);
+        d.setStyleSheet("background-color: white;");
+        d.exec();
+        QString name = d.textValue();
+        qDebug()<<"NAME: "<<name;
+        updateHighScores(name);
         this->close();
     }
     ship->updateCoordinates();
@@ -115,6 +207,7 @@ void GameWindow::updateAlienCoordinates()
 {
     if(aliens->getGameOver())
     {
+        bool ok;
         alien_timer->stop();
         ship_timer->stop();
         bullet_timer->stop();
@@ -122,6 +215,11 @@ void GameWindow::updateAlienCoordinates()
         QMessageBox mBox;
         mBox.setText("GAME OVER");
         mBox.exec();
+        QInputDialog d(this);
+        d.setStyleSheet("background-color: white;");
+        d.exec();
+        QString name = d.textValue();
+        updateHighScores(name);
         this->close();
     }
     aliens->checkforCollisions();

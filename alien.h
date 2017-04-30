@@ -11,7 +11,7 @@ public:
     Alien(QWidget *parent=0,Bullet* bullet = 0);
     void drawAlien(QPainter& paint);
     void updateCoordindates();
-    void checkforCollisions();
+    int checkforCollisions();
     bool getGameOver();
     int getAlienBulletX();
     int getAlienBulletY();
