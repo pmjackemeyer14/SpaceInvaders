@@ -13,27 +13,34 @@ GameWindow::GameWindow(QWidget *parent) : QWidget(parent)
     bullet_timer = new QTimer();
     ship_timer = new QTimer();
     alien_timer = new QTimer();
-    collision_timer = new QTimer();
+    alienBulletTimer = new QTimer();
+    //collision_timer = new QTimer();
     connect(alien_timer,SIGNAL(timeout()),this,SLOT(updateAlienCoordinates()));
     connect(bullet_timer,SIGNAL(timeout()),this,SLOT(updateBulletCoordinates()));
     connect(ship_timer,SIGNAL(timeout()),this,SLOT(updateShipCoordinates()));
-    connect(collision_timer,SIGNAL(timeout()),this,SLOT(collisionCheck()));
+    connect(alienBulletTimer,SIGNAL(timeout()),this,SLOT(updateAlienBulletCoordinates()));
+    //connect(collision_timer,SIGNAL(timeout()),this,SLOT(collisionCheck()));
     alien_timer->start();
     alien_timer->setInterval(2000);
     ship_timer->start();
-    ship_timer->setInterval(50);
+    ship_timer->setInterval(30);
     bullet_timer->setInterval(50);
-    collision_timer->setInterval(20);
-    collision_timer->start();
+    alienBulletTimer->start();
+    alienBulletTimer->setInterval(50);
+    //collision_timer->setInterval(20);
+    //collision_timer->start();
     bullet = new Bullet(this);
     aliens = new Alien(this,bullet);
     ship = new PlayerShip(this);
+    alienBullet = new AlienBullets(this);
+    alienBullet->setBulletCoordinates(aliens->getAlienBulletX(),aliens->getAlienBulletY());
 }
 
 void GameWindow::paintEvent(QPaintEvent *e)
 {
     QPainter* paint = new QPainter(this);
     aliens->drawAlien(*paint);
+    alienBullet->drawAlienBullets(*paint);
     ship->drawShip(*paint);
     if(shotFired)
     {
@@ -113,6 +120,12 @@ void GameWindow::collisionCheck()
 {
     //aliens->checkforCollisions();
     //this->update();
+}
+
+void GameWindow::updateAlienBulletCoordinates()
+{
+    alienBullet->updateCoordinates();
+    this->update();
 }
 
 

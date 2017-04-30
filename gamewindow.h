@@ -5,6 +5,7 @@
 #include "alien.h"
 #include "bullet.h"
 #include "playership.h"
+#include "alienbullets.h"
 
 class GameWindow : public QWidget
 {
@@ -25,16 +26,19 @@ private slots:
     void updateShipCoordinates();
     void updateAlienCoordinates();
     void collisionCheck();
+    void updateAlienBulletCoordinates();
 
 private:
     bool shotFired;
     Alien* aliens;
+    AlienBullets* alienBullet;
     Bullet* bullet;
     PlayerShip* ship;
     QTimer* bullet_timer;
     QTimer* ship_timer;
     QTimer* alien_timer;
     QTimer* collision_timer;
+    QTimer* alienBulletTimer;
 };
 
 #endif // GAMEWINDOW_H

@@ -13,6 +13,9 @@ public:
     void updateCoordindates();
     void checkforCollisions();
     bool getGameOver();
+    int getAlienBulletX();
+    int getAlienBulletY();
+
 private:
     QWidget* parent;
     Bullet* bullet;
@@ -22,6 +25,7 @@ private:
     int boundBox_ycord;
     int xcord[55];
     int ycord[55];
+    int alienIndex;
     int alienDestroyed[55];
     int alienDirection;
     bool gameOver;

@@ -2,10 +2,13 @@
 #include <QDebug>
 #include <QPainter>
 #include <QMessageBox>
+#include <ctime>
 
 
 Alien::Alien(QWidget *parent, Bullet *bullet):parent(parent),bullet(bullet)
 {
+    srand( time(0));
+    alienIndex = rand()%55+44;
     alienDirection = 2;
     gameOver = false;
     int xtemp = 0;
@@ -46,15 +49,14 @@ Alien::Alien(QWidget *parent, Bullet *bullet):parent(parent),bullet(bullet)
     {
          aliens[i].setCoords(xcord[i],ycord[i],xcord[i]+20,ycord[i]-20);
     }
+
 }
 
 void Alien::drawAlien(QPainter &paint)
 {
     QColor alienColor = QColor(230,230,23);
-    //QColor bbcolor = QColor(0,0,0);
     boundingBox.setCoords(boundBox_xcord,boundBox_ycord,boundBox_xcord+420,boundBox_ycord+180);
     paint.drawRect(boundingBox);
-    //paint.fillRect(boundingBox,bbcolor);
     for(int i = 0; i<55;i++)
     {
         if(alienDestroyed[i] == 1)
@@ -175,4 +177,15 @@ void Alien::checkforCollisions()
 bool Alien::getGameOver()
 {
     return this->gameOver;
+}
+
+int Alien::getAlienBulletX()
+{
+    alienIndex = rand()%55+44;
+    return xcord[alienIndex];
+}
+
+int Alien::getAlienBulletY()
+{
+    return ycord[alienIndex];
 }

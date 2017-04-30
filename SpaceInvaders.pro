@@ -18,14 +18,16 @@ SOURCES += main.cpp\
     highscore.cpp \
     alien.cpp \
     bullet.cpp \
-    playership.cpp
+    playership.cpp \
+    alienbullets.cpp
 
 HEADERS  += widget.h \
     gamewindow.h \
     highscore.h \
     alien.h \
     bullet.h \
-    playership.h
+    playership.h \
+    alienbullets.h
 
 FORMS    += widget.ui \
     highscore.ui
