@@ -6,6 +6,7 @@
 #include "bullet.h"
 #include "playership.h"
 #include "alienbullets.h"
+#include "barriers.h"
 
 class GameWindow : public QWidget
 {
@@ -33,6 +34,7 @@ private:
     Alien* aliens;
     AlienBullets* alienBullet;
     Bullet* bullet;
+    Barriers* barrier;
     PlayerShip* ship;
     QTimer* bullet_timer;
     QTimer* ship_timer;

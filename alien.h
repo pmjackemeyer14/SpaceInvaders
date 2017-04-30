@@ -28,6 +28,7 @@ private:
     int alienIndex;
     int alienDestroyed[55];
     int alienDirection;
+    int max;
     bool gameOver;
 };
 

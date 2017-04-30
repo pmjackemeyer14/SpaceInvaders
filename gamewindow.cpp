@@ -7,6 +7,7 @@
 #include <QMessageBox>
 #include "alien.h"
 
+
 GameWindow::GameWindow(QWidget *parent) : QWidget(parent)
 {
     shotFired = false;
@@ -14,12 +15,10 @@ GameWindow::GameWindow(QWidget *parent) : QWidget(parent)
     ship_timer = new QTimer();
     alien_timer = new QTimer();
     alienBulletTimer = new QTimer();
-    //collision_timer = new QTimer();
     connect(alien_timer,SIGNAL(timeout()),this,SLOT(updateAlienCoordinates()));
     connect(bullet_timer,SIGNAL(timeout()),this,SLOT(updateBulletCoordinates()));
     connect(ship_timer,SIGNAL(timeout()),this,SLOT(updateShipCoordinates()));
     connect(alienBulletTimer,SIGNAL(timeout()),this,SLOT(updateAlienBulletCoordinates()));
-    //connect(collision_timer,SIGNAL(timeout()),this,SLOT(collisionCheck()));
     alien_timer->start();
     alien_timer->setInterval(2000);
     ship_timer->start();
@@ -27,13 +26,12 @@ GameWindow::GameWindow(QWidget *parent) : QWidget(parent)
     bullet_timer->setInterval(50);
     alienBulletTimer->start();
     alienBulletTimer->setInterval(50);
-    //collision_timer->setInterval(20);
-    //collision_timer->start();
     bullet = new Bullet(this);
     aliens = new Alien(this,bullet);
-    ship = new PlayerShip(this);
     alienBullet = new AlienBullets(this);
     alienBullet->setBulletCoordinates(aliens->getAlienBulletX(),aliens->getAlienBulletY());
+    ship = new PlayerShip(this,alienBullet);
+    barrier = new Barriers(this,bullet,alienBullet);
 }
 
 void GameWindow::paintEvent(QPaintEvent *e)
@@ -42,6 +40,7 @@ void GameWindow::paintEvent(QPaintEvent *e)
     aliens->drawAlien(*paint);
     alienBullet->drawAlienBullets(*paint);
     ship->drawShip(*paint);
+    barrier->DrawBarriers(*paint);
     if(shotFired)
     {
         bullet->drawBullet(*paint);
@@ -83,6 +82,7 @@ void GameWindow::keyReleaseEvent(QKeyEvent *ev)
 void GameWindow::updateBulletCoordinates()
 {
     aliens->checkforCollisions();
+    barrier->CheckforCollisions();
     if(bullet->getBulletYCord()<20 || bullet->getBulletCollision() )
     {
         bullet_timer->stop();
@@ -94,6 +94,18 @@ void GameWindow::updateBulletCoordinates()
 
 void GameWindow::updateShipCoordinates()
 {
+    ship->checkForCollisions();
+    if(ship->getGameOver())
+    {
+        alien_timer->stop();
+        ship_timer->stop();
+        bullet_timer->stop();
+        alienBulletTimer->stop();
+        QMessageBox mBox;
+        mBox.setText("GAME OVER");
+        mBox.exec();
+        this->close();
+    }
     ship->updateCoordinates();
     bullet->setShipXCord(ship->getShipXCord());
     this->update();
@@ -106,6 +118,7 @@ void GameWindow::updateAlienCoordinates()
         alien_timer->stop();
         ship_timer->stop();
         bullet_timer->stop();
+        alienBulletTimer->stop();
         QMessageBox mBox;
         mBox.setText("GAME OVER");
         mBox.exec();
@@ -124,7 +137,13 @@ void GameWindow::collisionCheck()
 
 void GameWindow::updateAlienBulletCoordinates()
 {
+    ship->checkForCollisions();
+    barrier->CheckforCollisions();
     alienBullet->updateCoordinates();
+    if(alienBullet->getBulletDestroyed())
+    {
+        alienBullet->setBulletCoordinates(aliens->getAlienBulletX(),aliens->getAlienBulletY());
+    }
     this->update();
 }
 

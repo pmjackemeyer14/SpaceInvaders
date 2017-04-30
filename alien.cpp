@@ -8,7 +8,8 @@
 Alien::Alien(QWidget *parent, Bullet *bullet):parent(parent),bullet(bullet)
 {
     srand( time(0));
-    alienIndex = rand()%55+44;
+    max = 50;
+    alienIndex = rand()%11+44;
     alienDirection = 2;
     gameOver = false;
     int xtemp = 0;
@@ -151,9 +152,9 @@ void Alien::updateCoordindates()
          if(ycord[i] > max)
          {
              max = ycord[i];
+             this->max = i;
          }
         }
-        qDebug()<<"MAX: "<<max;
         if(max >= parent->height()-20)
         {
             gameOver = true;
@@ -181,11 +182,49 @@ bool Alien::getGameOver()
 
 int Alien::getAlienBulletX()
 {
-    alienIndex = rand()%55+44;
+    if(max >= 44 && max < 55)
+    {
+        alienIndex = rand()%11+44;
+        while(alienDestroyed[alienIndex] == 1)
+        {
+            alienIndex = rand()%11+44;
+        }
+
+    }else if(max >=33 && max < 44)
+    {
+        alienIndex = rand()%11+33;
+        while(alienDestroyed[alienIndex] == 1)
+        {
+            alienIndex = rand()%11+33;
+        }
+    }else if(max >= 22 && max < 33)
+    {
+        alienIndex = rand()%11+22;
+        while(alienDestroyed[alienIndex] == 1)
+        {
+            alienIndex = rand()%11+22;
+        }
+    }else if(max >= 11 && max < 22)
+    {
+        alienIndex = rand()%11+11;
+        while(alienDestroyed[alienIndex] == 1)
+        {
+            alienIndex = rand()%11+11;
+        }
+    }else
+    {
+        alienIndex = rand()%11;
+        while(alienDestroyed[alienIndex] == 1)
+        {
+            alienIndex = rand()%11;
+        }
+    }
+
     return xcord[alienIndex];
 }
 
 int Alien::getAlienBulletY()
 {
+
     return ycord[alienIndex];
 }

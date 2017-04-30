@@ -9,6 +9,9 @@ public:
     void setBulletCoordinates(int x, int y);
     void drawAlienBullets(QPainter& paint);
     void updateCoordinates();
+    void setCollision(bool collision);
+    bool getBulletDestroyed();
+    QRect getBulletRect();
 private:
     QWidget* parent;
     QRect bullet;

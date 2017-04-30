@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     alien.cpp \
     bullet.cpp \
     playership.cpp \
-    alienbullets.cpp
+    alienbullets.cpp \
+    barriers.cpp
 
 HEADERS  += widget.h \
     gamewindow.h \
@@ -27,7 +28,8 @@ HEADERS  += widget.h \
     alien.h \
     bullet.h \
     playership.h \
-    alienbullets.h
+    alienbullets.h \
+    barriers.h
 
 FORMS    += widget.ui \
     highscore.ui

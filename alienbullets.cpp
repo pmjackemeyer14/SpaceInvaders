@@ -1,10 +1,12 @@
 #include "alienbullets.h"
 #include <ctime>
 #include <QPainter>
+#include <QDebug>
 
 AlienBullets::AlienBullets(QWidget *parent):parent(parent)
 {
    bulletDestroyed = true;
+   collision = false;
 }
 
 void AlienBullets::setBulletCoordinates(int x, int y)
@@ -25,9 +27,25 @@ void AlienBullets::drawAlienBullets(QPainter &paint)
 void AlienBullets::updateCoordinates()
 {
     ycord+=10;
-    if(ycord > parent->height())
+    if(ycord > parent->height() || collision)
     {
         bulletDestroyed = true;
+        collision = false;
 
     }
+}
+
+void AlienBullets::setCollision(bool collision)
+{
+    this->collision = collision;
+}
+
+bool AlienBullets::getBulletDestroyed()
+{
+    return this->bulletDestroyed;
+}
+
+QRect AlienBullets::getBulletRect()
+{
+    return this->bullet;
 }
