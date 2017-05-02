@@ -82,8 +82,6 @@ void Alien::drawAlien(QPainter &paint)
         }
         else
         {
-            for(int i = 0; i <55; i++)
-            {
                 aliens[i].setCoords(xcord[i],ycord[i],xcord[i]+20,ycord[i]-20);
                 paint.drawRect(aliens[i]);
                 if(i < 11)
@@ -98,7 +96,7 @@ void Alien::drawAlien(QPainter &paint)
                     paint.drawImage(aliens[i],*alien2);
                 }
 
-            }
+
         }
 
     }
