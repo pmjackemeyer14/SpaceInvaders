@@ -23,17 +23,26 @@ GameWindow::GameWindow(QWidget *parent) : QWidget(parent)
     ship_timer = new QTimer();
     alien_timer = new QTimer();
     alienBulletTimer = new QTimer();
+    generateUFO_timer = new QTimer();
+    update_UFOTimer = new  QTimer();
     connect(alien_timer,SIGNAL(timeout()),this,SLOT(updateAlienCoordinates()));
     connect(bullet_timer,SIGNAL(timeout()),this,SLOT(updateBulletCoordinates()));
     connect(ship_timer,SIGNAL(timeout()),this,SLOT(updateShipCoordinates()));
     connect(alienBulletTimer,SIGNAL(timeout()),this,SLOT(updateAlienBulletCoordinates()));
+    connect(generateUFO_timer,SIGNAL(timeout()),this,SLOT(generateUFO()));
+    connect(update_UFOTimer,SIGNAL(timeout()),this,SLOT(updateUFOCoordinates()));
     alien_timer->start();
-    alien_timer->setInterval(2000);
+    alienBulletTimer->start();
+    generateUFO_timer->start();
     ship_timer->start();
+    alien_timer->setInterval(2000);
     ship_timer->setInterval(30);
     bullet_timer->setInterval(50);
-    alienBulletTimer->start();
     alienBulletTimer->setInterval(50);
+    generateUFO_timer->setInterval(5000);
+    update_UFOTimer->setInterval(200);
+    ufo = new UFO(this);
+    ufo->setShow(false);
     bullet = new Bullet(this);
     aliens = new Alien(this,bullet);
     alienBullet = new AlienBullets(this);
@@ -46,6 +55,7 @@ void GameWindow::paintEvent(QPaintEvent *e)
 {
     QColor textColor = QColor(255,0,0);
     QPainter* paint = new QPainter(this);
+    ufo->drawUFO(*paint);
     aliens->drawAlien(*paint);
     alienBullet->drawAlienBullets(*paint);
     ship->drawShip(*paint);
@@ -289,6 +299,24 @@ void GameWindow::updateAlienBulletCoordinates()
         alienBullet->setBulletCoordinates(aliens->getAlienBulletX(),aliens->getAlienBulletY());
     }
     this->update();
+}
+
+void GameWindow::generateUFO()
+{
+    ufo->setShow(true);
+    update_UFOTimer->start();
+}
+
+void GameWindow::updateUFOCoordinates()
+{
+
+    if(ufo->getShow())
+    {
+        ufo->updateCoordinates();
+    }else
+    {
+        update_UFOTimer->stop();
+    }
 }
 
 

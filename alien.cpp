@@ -11,11 +11,11 @@ Alien::Alien(QWidget *parent, Bullet *bullet):parent(parent),bullet(bullet)
     srand( time(0));
 
     alien3 = new QImage("../SpaceInvaders/alien4.png");
-    *alien3 = alien3->scaled(20,20);
+    *alien3 = alien3->scaled(30,30);
     alien2 = new QImage("../SpaceInvaders/alien2.png");
-    *alien2 = alien2->scaled(20,20);
+    *alien2 = alien2->scaled(30,30);
     alien1 = new QImage("../SpaceInvaders/alien1.png");
-    *alien1 = alien1->scaled(20,20);
+    *alien1 = alien1->scaled(30,30);
     musicPlayer = new QMediaPlayer();
     musicPlayerExplosion = new QMediaPlayer();
     musicPlayer->setMedia(QUrl::fromLocalFile("../SpaceInvaders/fastinvader1.wav"));
@@ -30,7 +30,7 @@ Alien::Alien(QWidget *parent, Bullet *bullet):parent(parent),bullet(bullet)
     int ytemp = 60;
     boundBox_xcord = 0;
     boundBox_ycord = 40;
-    boundingBox.setCoords(0,40,420,220);
+    boundingBox.setCoords(0,40,430,220);
     for(int i = 0;i<55;i++)
     {
         alienDestroyed[i] = 0;
@@ -62,7 +62,7 @@ Alien::Alien(QWidget *parent, Bullet *bullet):parent(parent),bullet(bullet)
     }
     for(int i = 0; i < 55;i++)
     {
-         aliens[i].setCoords(xcord[i],ycord[i],xcord[i]+20,ycord[i]-20);
+         aliens[i].setCoords(xcord[i],ycord[i],xcord[i]+30,ycord[i]-30);
     }
 
 }
@@ -72,8 +72,9 @@ void Alien::drawAlien(QPainter &paint)
     QColor hardAlienColor = QColor(230,230,23);
     QColor mediumAlienColor = QColor(205,0,205);
     QColor easyAlienColor = QColor(205,0,120);
-    boundingBox.setCoords(boundBox_xcord,boundBox_ycord,boundBox_xcord+420,boundBox_ycord+180);
+    boundingBox.setCoords(boundBox_xcord,boundBox_ycord,boundBox_xcord+430,boundBox_ycord+180);
     paint.drawRect(boundingBox);
+    //paint.fillRect(boundingBox,hardAlienColor);
     for(int i = 0; i<55;i++)
     {
         if(alienDestroyed[i] == 1)
@@ -82,18 +83,20 @@ void Alien::drawAlien(QPainter &paint)
         }
         else
         {
-                aliens[i].setCoords(xcord[i],ycord[i],xcord[i]+20,ycord[i]-20);
+                aliens[i].setCoords(xcord[i],ycord[i],xcord[i]+30,ycord[i]-30);
                 paint.drawRect(aliens[i]);
+                //paint.fillRect(aliens[i],hardAlienColor);
                 if(i < 11)
-                {   paint.drawImage(aliens[i],*alien3);
+                {
+                    paint.drawImage(xcord[i],ycord[i]-30,*alien3);
                     //paint.fillRect(aliens[i],hardAlienColor);
                 }else if(i >= 11 && i<33)
                 {
                     //paint.fillRect(aliens[i],mediumAlienColor);
-                    paint.drawImage(aliens[i],*alien1);
+                    paint.drawImage(xcord[i],ycord[i]-30,*alien1);
                 }else{
                     //paint.fillRect(aliens[i],easyAlienColor);
-                    paint.drawImage(aliens[i],*alien2);
+                    paint.drawImage(xcord[i],ycord[i]-30,*alien2);
                 }
 
 
@@ -104,7 +107,6 @@ void Alien::drawAlien(QPainter &paint)
 
 void Alien::updateCoordindates()
 {
-
     if(phase == 0)
     {
          musicPlayer->setMedia(QUrl::fromLocalFile("../SpaceInvaders/fastinvader1.wav"));
@@ -153,11 +155,11 @@ void Alien::updateCoordindates()
                         continue;
                     }else
                     {
-                       xcord[i]+=40;
+                       xcord[i]+=10;
 
                     }
                 }
-             boundBox_xcord+=40;
+             boundBox_xcord+=10;
             }
         }else if(alienDirection == 1)
         {
@@ -184,11 +186,11 @@ void Alien::updateCoordindates()
                         continue;
                     }else
                     {
-                       xcord[i]-=40;
+                       xcord[i]-=10;
 
                     }
                 }
-                boundBox_xcord -= 40;
+                boundBox_xcord -= 10;
             }
         }
 
@@ -212,9 +214,12 @@ int Alien::checkforCollisions()
     int indexOfShipdestroyed = -1;
     for(int i = 0; i<55; i++)
     {
+        if(alienDestroyed[i] == 1)
+        {
+            continue;
+        }
         if(bullet->getBulletRect().intersects(aliens[i]))
         {
-
 
             musicPlayerExplosion->setVolume(50);
             musicPlayerExplosion->play();
@@ -243,6 +248,10 @@ int Alien::getAlienBulletX()
         while(alienDestroyed[alienIndex] == 1 && count < 12)
         {
             alienIndex = rand()%11+44;
+            if(count>=11)
+            {
+                alienIndex = rand()%11+33;
+            }
             count++;
         }
 
@@ -252,6 +261,10 @@ int Alien::getAlienBulletX()
         while(alienDestroyed[alienIndex] == 1 && count < 12)
         {
             alienIndex = rand()%11+33;
+            if(count>=11)
+            {
+                alienIndex = rand()%11+22;
+            }
             count++;
         }
     }else if(max >= 22 && max < 33 )
@@ -260,6 +273,10 @@ int Alien::getAlienBulletX()
         while(alienDestroyed[alienIndex] == 1 && count < 12)
         {
             alienIndex = rand()%11+22;
+            if(count>=11)
+            {
+                alienIndex = rand()%11+11;
+            }
             count++;
         }
     }else if(max >= 11 && max < 22)
@@ -268,6 +285,10 @@ int Alien::getAlienBulletX()
         while(alienDestroyed[alienIndex] == 1 && count < 12)
         {
             alienIndex = rand()%11+11;
+            if(count>=11)
+            {
+                alienIndex = rand()%11;
+            }
             count++;
         }
     }else

@@ -7,6 +7,7 @@
 #include "playership.h"
 #include "alienbullets.h"
 #include "barriers.h"
+#include "ufo.h"
 
 class GameWindow : public QWidget
 {
@@ -29,6 +30,8 @@ private slots:
     void updateAlienCoordinates();
     void collisionCheck();
     void updateAlienBulletCoordinates();
+    void generateUFO();
+    void updateUFOCoordinates();
 
 private:
     bool shotFired;
@@ -38,11 +41,14 @@ private:
     Bullet* bullet;
     Barriers* barrier;
     PlayerShip* ship;
+    UFO* ufo;
     QTimer* bullet_timer;
     QTimer* ship_timer;
     QTimer* alien_timer;
     QTimer* collision_timer;
     QTimer* alienBulletTimer;
+    QTimer* generateUFO_timer;
+    QTimer* update_UFOTimer;
 
     int playerScore;
 };
