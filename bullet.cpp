@@ -18,7 +18,6 @@ void Bullet::drawBullet(QPainter &paint)
     QColor bulletColor = QColor(255,255,255);
     if(initialShot)
     {
-        //NEED TO GET XCORD FROM SHIP
         xcord = shipXCord+10;
         initialShot = false;
     }
@@ -37,26 +36,6 @@ void Bullet::updateCoordinates()
             initialShot = true;
             ycord = parent->height()-10;
         }
-        //int offset = 0;
-//        if(alienDirection == 1)
-//        {
-//            offset = -10;
-//        }else
-//        {
-//            offset = 10;
-//        }
-//        for(int i = 0; i<55;i++)
-//        {
-//            if(bullet_ycord==alien_ycord[i] && bullet_xcord-alien_xcord[i] <= offset)
-//            {
-//                bulletDestroyed = true;
-//                bullet_timer->stop();
-//                shotFired = false;
-//                bullet_ycord = this->height()-10;
-//                alien_ycord[i] = 0;
-//                alienDestroyed[i] = 1;
-//            }
-        //        }
 }
 
 void Bullet::setShipXCord(int x)

@@ -12,10 +12,12 @@
 #include <QJsonDocument>
 #include <QInputDialog>
 #include <QDir>
+#include <QMediaPlayer>
 
 GameWindow::GameWindow(QWidget *parent) : QWidget(parent)
 {
     playerScore = 0;
+    paused = false;
     shotFired = false;
     bullet_timer = new QTimer();
     ship_timer = new QTimer();
@@ -72,10 +74,33 @@ void GameWindow::keyPressEvent(QKeyEvent *ev)
         ship->setDirection(2);
     }
 
+    if(ev->key() == Qt::Key_P)
+    {
+        if(paused)
+        {
+            alien_timer->start();
+            ship_timer->start();
+            bullet_timer->start();
+            alienBulletTimer->start();
+            paused = false;
+        }else
+        {
+            alien_timer->stop();
+            ship_timer->stop();
+            bullet_timer->stop();
+            alienBulletTimer->stop();
+            paused = true;
+        }
+    }
+
     if(ev->key() == Qt::Key_Space)
     {
         if(bullet->getBulletDestroyed())
         {
+            QMediaPlayer *musicPlayer = new QMediaPlayer();
+            musicPlayer->setMedia(QUrl::fromLocalFile("../SpaceInvaders/shoot.wav"));
+            musicPlayer->setVolume(50);
+            musicPlayer->play();
             shotFired = true;
             bullet_timer->start();
         }
@@ -159,7 +184,6 @@ void GameWindow::updateBulletCoordinates()
     barrier->CheckforCollisions();
     if(bullet->getBulletYCord()<20 || bullet->getBulletCollision() )
     {
-        //alienBullet->setBulletCoordinates(aliens->getAlienBulletX(),aliens->getAlienBulletY());
         if(shipIndex>=0 && shipIndex <11)
         {
             playerScore+=100;
@@ -179,9 +203,13 @@ void GameWindow::updateBulletCoordinates()
 
 void GameWindow::updateShipCoordinates()
 {
-    ship->checkForCollisions();
+
     if(ship->getGameOver())
     {
+        QMediaPlayer *musicPlayer = new QMediaPlayer();
+        musicPlayer->setMedia(QUrl::fromLocalFile("../SpaceInvaders/explosion.wav"));
+        musicPlayer->setVolume(50);
+        musicPlayer->play();
         bool ok;
         alien_timer->stop();
         ship_timer->stop();
@@ -191,6 +219,7 @@ void GameWindow::updateShipCoordinates()
         mBox.setText("GAME OVER");
         mBox.exec();
         QInputDialog d(this);
+        d.setLabelText("ENTER NAME:");
         d.setStyleSheet("background-color: white;");
         d.exec();
         QString name = d.textValue();
@@ -198,6 +227,7 @@ void GameWindow::updateShipCoordinates()
         updateHighScores(name);
         this->close();
     }
+    ship->checkForCollisions();
     ship->updateCoordinates();
     bullet->setShipXCord(ship->getShipXCord());
     this->update();
@@ -207,6 +237,10 @@ void GameWindow::updateAlienCoordinates()
 {
     if(aliens->getGameOver())
     {
+        QMediaPlayer *musicPlayer = new QMediaPlayer();
+        musicPlayer->setMedia(QUrl::fromLocalFile("../SpaceInvaders/explosion.wav"));
+        musicPlayer->setVolume(50);
+        musicPlayer->play();
         bool ok;
         alien_timer->stop();
         ship_timer->stop();
@@ -216,11 +250,23 @@ void GameWindow::updateAlienCoordinates()
         mBox.setText("GAME OVER");
         mBox.exec();
         QInputDialog d(this);
+        d.setLabelText("ENTER NAME:");
         d.setStyleSheet("background-color: white;");
         d.exec();
         QString name = d.textValue();
         updateHighScores(name);
         this->close();
+    }
+    int numDestroyed = aliens->getNumDestroyed();
+    if(numDestroyed >= 15 && numDestroyed < 33)
+    {
+        alien_timer->setInterval(1000);
+    }else if(numDestroyed >= 33 && numDestroyed < 44)
+    {
+        alien_timer->setInterval(500);
+    }else if(numDestroyed >= 44 && numDestroyed < 55)
+    {
+        alien_timer->setInterval(200);
     }
     aliens->checkforCollisions();
     aliens->updateCoordindates();

@@ -19,11 +19,11 @@ void PlayerShip::drawShip(QPainter &paint)
 
 void PlayerShip::updateCoordinates()
 {
-    if(direction == 1)
+    if(direction == 1 && xcord > 0)
     {
         xcord-=5;
 
-    }else if(direction == 2)
+    }else if(direction == 2 && xcord < (parent->width()-20))
     {
         xcord+=5;
     }

@@ -4,6 +4,7 @@
 #include <QRect>
 #include <QWidget>
 #include "bullet.h"
+#include <QMediaPlayer>
 
 class Alien
 {
@@ -15,6 +16,7 @@ public:
     bool getGameOver();
     int getAlienBulletX();
     int getAlienBulletY();
+    int getNumDestroyed();
 
 private:
     QWidget* parent;
@@ -29,6 +31,13 @@ private:
     int alienDestroyed[55];
     int alienDirection;
     int max;
+    int phase;
+    int numberDestroyed;
+    QMediaPlayer* musicPlayer;
+    QMediaPlayer* musicPlayerExplosion;
+    QImage* alien1;
+    QImage* alien2;
+    QImage* alien3;
     bool gameOver;
 };
 

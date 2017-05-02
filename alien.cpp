@@ -3,12 +3,26 @@
 #include <QPainter>
 #include <QMessageBox>
 #include <ctime>
+#include <QMediaPlayer>
 
 
 Alien::Alien(QWidget *parent, Bullet *bullet):parent(parent),bullet(bullet)
 {
     srand( time(0));
+
+    alien3 = new QImage("../SpaceInvaders/alien4.png");
+    *alien3 = alien3->scaled(20,20);
+    alien2 = new QImage("../SpaceInvaders/alien2.png");
+    *alien2 = alien2->scaled(20,20);
+    alien1 = new QImage("../SpaceInvaders/alien1.png");
+    *alien1 = alien1->scaled(20,20);
+    musicPlayer = new QMediaPlayer();
+    musicPlayerExplosion = new QMediaPlayer();
+    musicPlayer->setMedia(QUrl::fromLocalFile("../SpaceInvaders/fastinvader1.wav"));
+    musicPlayerExplosion->setMedia(QUrl::fromLocalFile("../SpaceInvaders/invaderkilled.wav"));
+    numberDestroyed = 0;
     max = 50;
+    phase = 0;
     alienIndex = rand()%11+44;
     alienDirection = 2;
     gameOver = false;
@@ -73,13 +87,15 @@ void Alien::drawAlien(QPainter &paint)
                 aliens[i].setCoords(xcord[i],ycord[i],xcord[i]+20,ycord[i]-20);
                 paint.drawRect(aliens[i]);
                 if(i < 11)
-                {
-                    paint.fillRect(aliens[i],hardAlienColor);
+                {   paint.drawImage(aliens[i],*alien3);
+                    //paint.fillRect(aliens[i],hardAlienColor);
                 }else if(i >= 11 && i<33)
                 {
-                    paint.fillRect(aliens[i],mediumAlienColor);
+                    //paint.fillRect(aliens[i],mediumAlienColor);
+                    paint.drawImage(aliens[i],*alien1);
                 }else{
-                    paint.fillRect(aliens[i],easyAlienColor);
+                    //paint.fillRect(aliens[i],easyAlienColor);
+                    paint.drawImage(aliens[i],*alien2);
                 }
 
             }
@@ -91,6 +107,27 @@ void Alien::drawAlien(QPainter &paint)
 void Alien::updateCoordindates()
 {
 
+    if(phase == 0)
+    {
+         musicPlayer->setMedia(QUrl::fromLocalFile("../SpaceInvaders/fastinvader1.wav"));
+    }else if(phase == 1)
+    {
+         musicPlayer->setMedia(QUrl::fromLocalFile("../SpaceInvaders/fastinvader2.wav"));
+    }else if(phase == 2)
+    {
+         musicPlayer->setMedia(QUrl::fromLocalFile("../SpaceInvaders/fastinvader3.wav"));
+    }else if(phase == 3)
+    {
+         musicPlayer->setMedia(QUrl::fromLocalFile("../SpaceInvaders/fastinvader4.wav"));
+    }
+    musicPlayer->setVolume(50);
+    musicPlayer->play();
+
+    phase++;
+    if(phase > 3)
+    {
+        phase = 0;
+    }
 
         if(alienDirection == 2)
         {
@@ -104,10 +141,10 @@ void Alien::updateCoordindates()
                         continue;
                     }else
                     {
-                       ycord[i]+=40;
+                       ycord[i]+=10;
                     }
                 }
-                boundBox_ycord+=40;
+                boundBox_ycord+=10;
                 alienDirection = 1;
             }else
             {
@@ -135,10 +172,10 @@ void Alien::updateCoordindates()
                         continue;
                     }else
                     {
-                       ycord[i]+=40;
+                       ycord[i]+=10;
                     }
                 }
-                boundBox_ycord += 40;
+                boundBox_ycord += 10;
                 alienDirection = 2;
             }else
             {
@@ -179,7 +216,12 @@ int Alien::checkforCollisions()
     {
         if(bullet->getBulletRect().intersects(aliens[i]))
         {
+
+
+            musicPlayerExplosion->setVolume(50);
+            musicPlayerExplosion->play();
             indexOfShipdestroyed = i;
+            numberDestroyed++;
             alienDestroyed[i] = 1;
             xcord[i] = 0;
             ycord[i] = 0;
@@ -196,41 +238,47 @@ bool Alien::getGameOver()
 
 int Alien::getAlienBulletX()
 {
+    int count = 0;
     if(max >= 44 && max < 55)
     {
         alienIndex = rand()%11+44;
-        while(alienDestroyed[alienIndex] == 1)
+        while(alienDestroyed[alienIndex] == 1 && count < 12)
         {
             alienIndex = rand()%11+44;
+            count++;
         }
 
     }else if(max >=33 && max < 44)
     {
         alienIndex = rand()%11+33;
-        while(alienDestroyed[alienIndex] == 1)
+        while(alienDestroyed[alienIndex] == 1 && count < 12)
         {
             alienIndex = rand()%11+33;
+            count++;
         }
-    }else if(max >= 22 && max < 33)
+    }else if(max >= 22 && max < 33 )
     {
         alienIndex = rand()%11+22;
-        while(alienDestroyed[alienIndex] == 1)
+        while(alienDestroyed[alienIndex] == 1 && count < 12)
         {
             alienIndex = rand()%11+22;
+            count++;
         }
     }else if(max >= 11 && max < 22)
     {
         alienIndex = rand()%11+11;
-        while(alienDestroyed[alienIndex] == 1)
+        while(alienDestroyed[alienIndex] == 1 && count < 12)
         {
             alienIndex = rand()%11+11;
+            count++;
         }
     }else
     {
         alienIndex = rand()%11;
-        while(alienDestroyed[alienIndex] == 1)
+        while(alienDestroyed[alienIndex] == 1 && count < 12)
         {
             alienIndex = rand()%11;
+            count++;
         }
     }
 
@@ -241,4 +289,9 @@ int Alien::getAlienBulletY()
 {
 
     return ycord[alienIndex];
+}
+
+int Alien::getNumDestroyed()
+{
+    return this->numberDestroyed;
 }

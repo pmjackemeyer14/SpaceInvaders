@@ -32,6 +32,7 @@ private slots:
 
 private:
     bool shotFired;
+    bool paused;
     Alien* aliens;
     AlienBullets* alienBullet;
     Bullet* bullet;
@@ -42,6 +43,7 @@ private:
     QTimer* alien_timer;
     QTimer* collision_timer;
     QTimer* alienBulletTimer;
+
     int playerScore;
 };
 
