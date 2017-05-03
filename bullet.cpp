@@ -6,7 +6,6 @@
 Bullet::Bullet(QWidget *parent):parent(parent)
 {
     bulletDestroyed = true;
-    globalCollision = false;
     collision = false;
     initialShot = true;
     xcord = 0;
@@ -30,11 +29,9 @@ void Bullet::drawBullet(QPainter &paint)
 
 void Bullet::updateCoordinates()
 {
-    qDebug()<<"UPDATING BULLET COORDINATES";
         ycord-=10;
         if(ycord <= 0 || collision)
         {
-            globalCollision = true;
             collision = false;
             bulletDestroyed = true;
             initialShot = true;

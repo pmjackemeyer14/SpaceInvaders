@@ -18,7 +18,6 @@ public:
     void paintEvent(QPaintEvent* e);
     void keyPressEvent(QKeyEvent* ev);
     void keyReleaseEvent(QKeyEvent* ev);
-    void drawPlayerShip(QPainter *paint);
     void updateHighScores(QString name);
 
 signals:
@@ -29,7 +28,6 @@ private slots:
     void updateBulletCoordinates();
     void updateShipCoordinates();
     void updateAlienCoordinates();
-    void collisionCheck();
     void updateAlienBulletCoordinates();
     void generateUFO();
     void updateUFOCoordinates();
@@ -47,7 +45,6 @@ private:
     QTimer* bullet_timer;
     QTimer* ship_timer;
     QTimer* alien_timer;
-    QTimer* collision_timer;
     QTimer* alienBulletTimer;
     QTimer* generateUFO_timer;
     QTimer* update_UFOTimer;

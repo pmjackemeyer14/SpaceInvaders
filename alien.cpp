@@ -69,33 +69,26 @@ Alien::Alien(QWidget *parent, Bullet *bullet):parent(parent),bullet(bullet)
 
 void Alien::drawAlien(QPainter &paint)
 {
-    QColor hardAlienColor = QColor(230,230,23);
-    QColor mediumAlienColor = QColor(205,0,205);
-    QColor easyAlienColor = QColor(205,0,120);
     boundingBox.setCoords(boundBox_xcord,boundBox_ycord,boundBox_xcord+430,boundBox_ycord+180);
     paint.drawRect(boundingBox);
-    //paint.fillRect(boundingBox,hardAlienColor);
     for(int i = 0; i<55;i++)
     {
         if(alienDestroyed[i] == 1)
         {
-            continue;
+            continue;//IF alien has been destoyred don't draw it
         }
         else
         {
                 aliens[i].setCoords(xcord[i],ycord[i],xcord[i]+30,ycord[i]-30);
                 paint.drawRect(aliens[i]);
-                //paint.fillRect(aliens[i],hardAlienColor);
                 if(i < 11)
                 {
                     paint.drawImage(xcord[i],ycord[i]-30,*alien3);
-                    //paint.fillRect(aliens[i],hardAlienColor);
                 }else if(i >= 11 && i<33)
                 {
-                    //paint.fillRect(aliens[i],mediumAlienColor);
                     paint.drawImage(xcord[i],ycord[i]-30,*alien1);
-                }else{
-                    //paint.fillRect(aliens[i],easyAlienColor);
+                }else
+                {
                     paint.drawImage(xcord[i],ycord[i]-30,*alien2);
                 }
 
@@ -202,6 +195,7 @@ void Alien::updateCoordindates()
              max = ycord[i];
          }
         }
+        //THIS LOOP FINDS THE LOWEST (CLOSEST TO PLAYER) ALIEN IN EACH COLUMN
         int maxColumn1 = 0;
         for(int j = 0; j < 11; j++)
         {
@@ -226,6 +220,7 @@ void Alien::generateNewNumber()
 {
     alienIndex = rand()%10;
     int count = 0;
+    //IF THE XCORD IS 0, THE ALIEN HAS BEEN DESTROYED SO GENERATE A NEW RANDOM NUM
     while(xcord[max[alienIndex]] == 0 && count < 100 )
     {
         alienIndex = rand()%10;
@@ -241,13 +236,10 @@ int Alien::checkforCollisions()
     {
         if(alienDestroyed[i] == 1)
         {
-            continue;
+            continue;//DONT NEED TO CHECK ALREADY DESTROYED ALIENS
         }
         if(bullet->getBulletRect().intersects(aliens[i]))
         {
-            qDebug()<<"ALIEN DESTROYED:";
-            qDebug()<<"BULLET X: "<<bullet->getBulletRect().x();
-            qDebug()<<"BULLET Y: "<<bullet->getBulletRect().y();
             musicPlayerExplosion->setVolume(50);
             musicPlayerExplosion->play();
             indexOfShipdestroyed = i;

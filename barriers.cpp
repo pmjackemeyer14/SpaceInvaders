@@ -40,7 +40,9 @@ void Barriers::DrawBarriers(QPainter &paint)
         x+=150;
         barrier[i] = barriers[i];
     }
-
+    //CHANGE COLOR BASED ON NUMBER OF HITS SUSTAINED
+    // BLUE = 0, GREEN = 1, YELLOW = 2, RED == 3
+    // BARRIER IS DELETED AFTER 4 Hits
     for(int i = 0;i<4;i++)
     {
         if(hitCount[i]==1)
@@ -66,15 +68,12 @@ void Barriers::CheckforCollisions()
     {
         if(barrier[i].intersects(playerBullet->getBulletRect()))
         {
-            qDebug()<<"COLLISION DETECTED ON BARRIER "<<i;
             hitCount[i]++;
             playerBullet->setCollision(true);
-            //playerBullet->updateCoordinates();
 
         }
         if(barrier[i].intersects(alienBullet->getBulletRect()))
         {
-            qDebug()<<"COLLISION DETECTED ON BARRIER "<<i;
             hitCount[i]++;
             alienBullet->setCollision(true);
         }

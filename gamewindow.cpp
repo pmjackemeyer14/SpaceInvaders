@@ -204,10 +204,10 @@ void GameWindow::updateHighScores(QString name)
 
 void GameWindow::updateBulletCoordinates()
 {
+    //CHECK FOR COLLISIONS WITH UFO,ALIEN, OR BARRIER
     barrier->CheckforCollisions();
     int shipIndex = aliens->checkforCollisions();
     bool ufoDestoyed = ufo->checkForCollisions();
-    qDebug()<<"CHECKING FOR COLLISIONS";
     if(bullet->getBulletYCord()<20 || bullet->getBulletCollision())
     {
         if(shipIndex>=0 && shipIndex <11)
@@ -223,13 +223,10 @@ void GameWindow::updateBulletCoordinates()
         {
             playerScore+=500;
         }
-        //bullet->setCollision(false);
         bullet_timer->stop();
         shotFired = false;
     }
-        bullet->updateCoordinates();
-
-
+    bullet->updateCoordinates();
     this->update();
 }
 
@@ -336,11 +333,6 @@ void GameWindow::updateAlienCoordinates()
     this->update();
 }
 
-void GameWindow::collisionCheck()
-{
-    //aliens->checkforCollisions();
-    //this->update();
-}
 
 void GameWindow::updateAlienBulletCoordinates()
 {

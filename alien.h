@@ -22,6 +22,7 @@ public:
 private:
     QWidget* parent;
     Bullet* bullet;
+    //11 columns and 5 rows of aliens
     QRect aliens[55];
     QRect boundingBox;
     int boundBox_xcord;
@@ -30,9 +31,11 @@ private:
     int ycord[55];
     int alienIndex;
     int alienDestroyed[55];
-    int alienDirection;
+    int alienDirection;// 2 = right, 1 = left
     int max[11];
+    //determines what phase of the music the game is on
     int phase;
+    //keeps track of the number of destroyed aliens
     int numberDestroyed;
     QMediaPlayer* musicPlayer;
     QMediaPlayer* musicPlayerExplosion;

@@ -20,7 +20,6 @@ private:
     QRect bullet;
     bool bulletDestroyed;
     bool collision;
-    bool globalCollision;
     bool initialShot;
     int ycord;
     int xcord;
