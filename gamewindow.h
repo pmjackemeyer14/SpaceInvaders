@@ -2,6 +2,7 @@
 #define GAMEWINDOW_H
 
 #include <QWidget>
+#include <QMediaPlayer>
 #include "alien.h"
 #include "bullet.h"
 #include "playership.h"
@@ -32,6 +33,7 @@ private slots:
     void updateAlienBulletCoordinates();
     void generateUFO();
     void updateUFOCoordinates();
+    void incrementSecondsElapsed();
 
 private:
     bool shotFired;
@@ -49,7 +51,9 @@ private:
     QTimer* alienBulletTimer;
     QTimer* generateUFO_timer;
     QTimer* update_UFOTimer;
-
+    QTimer* milliseconds;
+    QMediaPlayer* bulletSound;
+    int timesUpdated;
     int playerScore;
 };
 

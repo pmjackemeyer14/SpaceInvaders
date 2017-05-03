@@ -10,6 +10,7 @@ public:
     void updateCoordinates();
     void setShipXCord(int x);
     void setCollision(bool collision);
+    void setBulletDestroyed(bool destroyed);
     bool getBulletDestroyed();
     bool getBulletCollision();
     int getBulletYCord();

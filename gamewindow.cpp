@@ -13,10 +13,14 @@
 #include <QInputDialog>
 #include <QDir>
 #include <QMediaPlayer>
+#include <QTime>
 
 GameWindow::GameWindow(QWidget *parent) : QWidget(parent)
 {
     playerScore = 0;
+    timesUpdated = 0;
+    bulletSound = new QMediaPlayer();
+    bulletSound->setMedia(QUrl::fromLocalFile("../SpaceInvaders/shoot.wav"));
     paused = false;
     shotFired = false;
     bullet_timer = new QTimer();
@@ -25,16 +29,20 @@ GameWindow::GameWindow(QWidget *parent) : QWidget(parent)
     alienBulletTimer = new QTimer();
     generateUFO_timer = new QTimer();
     update_UFOTimer = new  QTimer();
+    milliseconds = new QTimer();
     connect(alien_timer,SIGNAL(timeout()),this,SLOT(updateAlienCoordinates()));
     connect(bullet_timer,SIGNAL(timeout()),this,SLOT(updateBulletCoordinates()));
     connect(ship_timer,SIGNAL(timeout()),this,SLOT(updateShipCoordinates()));
     connect(alienBulletTimer,SIGNAL(timeout()),this,SLOT(updateAlienBulletCoordinates()));
     connect(generateUFO_timer,SIGNAL(timeout()),this,SLOT(generateUFO()));
     connect(update_UFOTimer,SIGNAL(timeout()),this,SLOT(updateUFOCoordinates()));
+    connect(milliseconds,SIGNAL(timeout()),this,SLOT(incrementSecondsElapsed()));
+    milliseconds->start();
     alien_timer->start();
     alienBulletTimer->start();
     generateUFO_timer->start();
     ship_timer->start();
+    milliseconds->setInterval(1000);
     alien_timer->setInterval(2000);
     ship_timer->setInterval(30);
     bullet_timer->setInterval(50);
@@ -65,11 +73,19 @@ void GameWindow::paintEvent(QPaintEvent *e)
         bullet->drawBullet(*paint);
     }
     QString score = "Score: ";
+    QString str = "Time Elapsed: ";
+    QTime n(0, 0, 0,0);
+    QTime t;
+    int secs = timesUpdated;
+    t = n.addSecs(secs);
+    QString time = t.toString("hh:mm:ss");
+    str.append(time);
     QString num = num.number(playerScore);
     score.append(num);
     QPen penHText(textColor);
     paint->setPen(penHText);
-    paint->drawText(25,20,score);
+    paint->drawText(this->width()-80,20,score);
+    paint->drawText(25,20,str);
 
 }
 
@@ -107,10 +123,8 @@ void GameWindow::keyPressEvent(QKeyEvent *ev)
     {
         if(bullet->getBulletDestroyed())
         {
-            QMediaPlayer *musicPlayer = new QMediaPlayer();
-            musicPlayer->setMedia(QUrl::fromLocalFile("../SpaceInvaders/shoot.wav"));
-            musicPlayer->setVolume(50);
-            musicPlayer->play();
+            bulletSound->setVolume(50);
+            bulletSound->play();
             shotFired = true;
             bullet_timer->start();
         }
@@ -193,7 +207,7 @@ void GameWindow::updateBulletCoordinates()
     int shipIndex = aliens->checkforCollisions();
     barrier->CheckforCollisions();
     bool ufoDestoyed = ufo->checkForCollisions();
-    if(bullet->getBulletYCord()<20 || bullet->getBulletCollision() )
+    if(bullet->getBulletYCord()<20 || bullet->getBulletCollision())
     {
         if(shipIndex>=0 && shipIndex <11)
         {
@@ -208,6 +222,7 @@ void GameWindow::updateBulletCoordinates()
         {
             playerScore+=500;
         }
+        //bullet->setCollision(false);
         bullet_timer->stop();
         shotFired = false;
     }
@@ -231,6 +246,7 @@ void GameWindow::updateShipCoordinates()
         alienBulletTimer->stop();
         generateUFO_timer->stop();
         update_UFOTimer->stop();
+        milliseconds->stop();
         QMessageBox mBox;
         mBox.setText("GAME OVER");
         mBox.exec();
@@ -264,6 +280,7 @@ void GameWindow::updateAlienCoordinates()
         alienBulletTimer->stop();
         generateUFO_timer->stop();
         update_UFOTimer->stop();
+        milliseconds->stop();
         QMessageBox mBox;
         mBox.setText("GAME OVER");
         mBox.exec();
@@ -285,6 +302,31 @@ void GameWindow::updateAlienCoordinates()
     }else if(numDestroyed >= 44 && numDestroyed < 55)
     {
         alien_timer->setInterval(200);
+    }else if(numDestroyed == 55)
+    {
+        playerScore+=(10000/timesUpdated);
+        QMediaPlayer* musicPlayer = new QMediaPlayer();
+        musicPlayer->setMedia(QUrl::fromLocalFile("../SpaceInvaders/TaDa.wav"));
+        musicPlayer->setVolume(50);
+        musicPlayer->play();
+        bool ok;
+        alien_timer->stop();
+        ship_timer->stop();
+        bullet_timer->stop();
+        alienBulletTimer->stop();
+        generateUFO_timer->stop();
+        update_UFOTimer->stop();
+        milliseconds->stop();
+        QMessageBox mBox;
+        mBox.setText("CONGRATS! YOU WON!");
+        mBox.exec();
+        QInputDialog d(this);
+        d.setLabelText("ENTER NAME:");
+        d.setStyleSheet("background-color: white;");
+        d.exec();
+        QString name = d.textValue();
+        updateHighScores(name);
+        this->close();
     }
     aliens->checkforCollisions();
     aliens->updateCoordindates();
@@ -326,6 +368,11 @@ void GameWindow::updateUFOCoordinates()
     {
         update_UFOTimer->stop();
     }
+}
+
+void GameWindow::incrementSecondsElapsed()
+{
+    timesUpdated++;
 }
 
 

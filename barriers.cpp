@@ -35,8 +35,9 @@ void Barriers::DrawBarriers(QPainter &paint)
           barriers[i].lineTo(x+10,y-30);
           barriers[i].lineTo(x+10,y);
           barriers[i].closeSubpath();
-          x+=150;
+
         }
+        x+=150;
         barrier[i] = barriers[i];
     }
 
@@ -51,7 +52,7 @@ void Barriers::DrawBarriers(QPainter &paint)
         }else if(hitCount[i]==3)
         {
             paint.fillPath(barrier[i],Qt::red);
-        }else
+        }else if(hitCount[i] == 0)
         {
             paint.fillPath(barrier[i],Qt::blue);
         }
@@ -68,6 +69,7 @@ void Barriers::CheckforCollisions()
             qDebug()<<"COLLISION DETECTED ON BARRIER "<<i;
             hitCount[i]++;
             playerBullet->setCollision(true);
+            playerBullet->updateCoordinates();
 
         }
         if(barrier[i].intersects(alienBullet->getBulletRect()))

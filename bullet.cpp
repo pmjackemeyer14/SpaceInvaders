@@ -48,6 +48,11 @@ void Bullet::setCollision(bool collision)
     this->collision = collision;
 }
 
+void Bullet::setBulletDestroyed(bool destroyed)
+{
+    this->bulletDestroyed = destroyed;
+}
+
 bool Bullet::getBulletDestroyed()
 {
     return this->bulletDestroyed;
