@@ -38,6 +38,8 @@ void Widget::on_HighScores_clicked()
 void Widget::on_StartGame_clicked()
 {
     GameWindow* gw = new GameWindow();
+    gw->setMinimumHeight(480);
+    gw->setMaximumHeight(480);
     gw->setMinimumWidth(660);
     gw->setMaximumWidth(660);
     gw->setStyleSheet("background-color: black;");
