@@ -39,11 +39,11 @@ GameWindow::GameWindow(QWidget *parent) : QWidget(parent)
     ship_timer->setInterval(30);
     bullet_timer->setInterval(50);
     alienBulletTimer->setInterval(50);
-    generateUFO_timer->setInterval(5000);
+    generateUFO_timer->setInterval(10000);
     update_UFOTimer->setInterval(200);
-    ufo = new UFO(this);
-    ufo->setShow(false);
     bullet = new Bullet(this);
+    ufo = new UFO(this,bullet);
+    ufo->setShow(false);
     aliens = new Alien(this,bullet);
     alienBullet = new AlienBullets(this);
     alienBullet->setBulletCoordinates(aliens->getAlienBulletX(),aliens->getAlienBulletY());
@@ -192,6 +192,7 @@ void GameWindow::updateBulletCoordinates()
 {
     int shipIndex = aliens->checkforCollisions();
     barrier->CheckforCollisions();
+    bool ufoDestoyed = ufo->checkForCollisions();
     if(bullet->getBulletYCord()<20 || bullet->getBulletCollision() )
     {
         if(shipIndex>=0 && shipIndex <11)
@@ -203,6 +204,9 @@ void GameWindow::updateBulletCoordinates()
         }else if(shipIndex>=33 && shipIndex < 55)
         {
             playerScore+=10;
+        }else if(ufoDestoyed)
+        {
+            playerScore+=500;
         }
         bullet_timer->stop();
         shotFired = false;
@@ -225,6 +229,8 @@ void GameWindow::updateShipCoordinates()
         ship_timer->stop();
         bullet_timer->stop();
         alienBulletTimer->stop();
+        generateUFO_timer->stop();
+        update_UFOTimer->stop();
         QMessageBox mBox;
         mBox.setText("GAME OVER");
         mBox.exec();
@@ -256,6 +262,8 @@ void GameWindow::updateAlienCoordinates()
         ship_timer->stop();
         bullet_timer->stop();
         alienBulletTimer->stop();
+        generateUFO_timer->stop();
+        update_UFOTimer->stop();
         QMessageBox mBox;
         mBox.setText("GAME OVER");
         mBox.exec();
@@ -296,6 +304,7 @@ void GameWindow::updateAlienBulletCoordinates()
     alienBullet->updateCoordinates();
     if(alienBullet->getBulletDestroyed())
     {
+        aliens->generateNewNumber();
         alienBullet->setBulletCoordinates(aliens->getAlienBulletX(),aliens->getAlienBulletY());
     }
     this->update();

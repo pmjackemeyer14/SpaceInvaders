@@ -21,16 +21,15 @@ Alien::Alien(QWidget *parent, Bullet *bullet):parent(parent),bullet(bullet)
     musicPlayer->setMedia(QUrl::fromLocalFile("../SpaceInvaders/fastinvader1.wav"));
     musicPlayerExplosion->setMedia(QUrl::fromLocalFile("../SpaceInvaders/invaderkilled.wav"));
     numberDestroyed = 0;
-    max = 50;
     phase = 0;
-    alienIndex = rand()%11+44;
+    alienIndex = rand()%10;
     alienDirection = 2;
     gameOver = false;
     int xtemp = 0;
-    int ytemp = 60;
+    int ytemp = 100;
     boundBox_xcord = 0;
-    boundBox_ycord = 40;
-    boundingBox.setCoords(0,40,430,220);
+    boundBox_ycord = 80;
+    boundingBox.setCoords(0,80,430,260);
     for(int i = 0;i<55;i++)
     {
         alienDestroyed[i] = 0;
@@ -53,6 +52,7 @@ Alien::Alien(QWidget *parent, Bullet *bullet):parent(parent),bullet(bullet)
     }
     for(int i = 0;i<11;i++)
     {
+        max[i] = 50;
         int k = i;
         for(k; k < 55;k+=11)
         {
@@ -200,13 +200,33 @@ void Alien::updateCoordindates()
          if(ycord[i] > max)
          {
              max = ycord[i];
-             this->max = i;
          }
         }
-        if(max >= parent->height()-20)
+        int maxColumn1 = 0;
+        for(int j = 0; j < 11; j++)
+        {
+            int i = j;
+            int upperBound = 44+j;
+            for(i; i <= upperBound;i+=11)
+            {
+                if(ycord[i] > maxColumn1)
+                {
+                    this->max[j] = i;
+                    qDebug()<<"MAX[j] = "<<this->max[j];
+                    qDebug()<<"J = "<<j;
+                }
+            }
+        }
+
+        if(max >= parent->height()-40)
         {
             gameOver = true;
         }
+}
+
+void Alien::generateNewNumber()
+{
+    alienIndex = rand()%10;
 }
 
 int Alien::checkforCollisions()
@@ -241,73 +261,68 @@ bool Alien::getGameOver()
 
 int Alien::getAlienBulletX()
 {
-    int count = 0;
-    if(max >= 44 && max < 55)
+    int alienx = 0;
+    qDebug()<<"ALIEN INDEX: "<<alienIndex;
+    switch(alienIndex)
     {
-        alienIndex = rand()%11+44;
-        while(alienDestroyed[alienIndex] == 1 && count < 12)
-        {
-            alienIndex = rand()%11+44;
-            if(count>=11)
-            {
-                alienIndex = rand()%11+33;
-            }
-            count++;
-        }
-
-    }else if(max >=33 && max < 44)
-    {
-        alienIndex = rand()%11+33;
-        while(alienDestroyed[alienIndex] == 1 && count < 12)
-        {
-            alienIndex = rand()%11+33;
-            if(count>=11)
-            {
-                alienIndex = rand()%11+22;
-            }
-            count++;
-        }
-    }else if(max >= 22 && max < 33 )
-    {
-        alienIndex = rand()%11+22;
-        while(alienDestroyed[alienIndex] == 1 && count < 12)
-        {
-            alienIndex = rand()%11+22;
-            if(count>=11)
-            {
-                alienIndex = rand()%11+11;
-            }
-            count++;
-        }
-    }else if(max >= 11 && max < 22)
-    {
-        alienIndex = rand()%11+11;
-        while(alienDestroyed[alienIndex] == 1 && count < 12)
-        {
-            alienIndex = rand()%11+11;
-            if(count>=11)
-            {
-                alienIndex = rand()%11;
-            }
-            count++;
-        }
-    }else
-    {
-        alienIndex = rand()%11;
-        while(alienDestroyed[alienIndex] == 1 && count < 12)
-        {
-            alienIndex = rand()%11;
-            count++;
-        }
+        case 0:  alienx = xcord[max[0]];
+        break;
+        case 1:  alienx = xcord[max[1]];
+        break;
+        case 2:  alienx = xcord[max[2]];
+        break;
+        case 3:  alienx = xcord[max[3]];
+        break;
+        case 4:  alienx = xcord[max[4]];
+        break;
+        case 5:  alienx = xcord[max[5]];
+        break;
+        case 6:  alienx = xcord[max[6]];
+        break;
+        case 7:  alienx = xcord[max[7]];
+        break;
+        case 8:  alienx = xcord[max[8]];
+        break;
+        case 9:  alienx = xcord[max[9]];
+        break;
+        case 10: alienx = xcord[max[10]];
     }
 
-    return xcord[alienIndex];
+    qDebug()<<"ALIEN FIRING FROM X = "<<alienx;
+    return alienx;
 }
 
 int Alien::getAlienBulletY()
 {
-
-    return ycord[alienIndex];
+    int alieny = 0;
+    qDebug()<<"ALIEN INDEX: "<<alienIndex;
+    switch(alienIndex)
+    {
+        case 0:  alieny = ycord[max[0]];
+        break;
+        case 1:  alieny = ycord[max[1]];
+        break;
+        case 2:  alieny = ycord[max[2]];
+        break;
+        case 3:  alieny = ycord[max[3]];
+        break;
+        case 4:  alieny = ycord[max[4]];
+        break;
+        case 5:  alieny = ycord[max[5]];
+        break;
+        case 6:  alieny = ycord[max[6]];
+        break;
+        case 7:  alieny = ycord[max[7]];
+        break;
+        case 8:  alieny = ycord[max[8]];
+        break;
+        case 9:  alieny = ycord[max[9]];
+        break;
+        case 10: alieny = ycord[max[10]];
+        qDebug()<<"CHOOSE CASE 10 WITH INDEX OF"<<max[10];
+    }
+    qDebug()<<"ALIEN FIRING FROM Y = "<<alieny;
+    return alieny;
 }
 
 int Alien::getNumDestroyed()

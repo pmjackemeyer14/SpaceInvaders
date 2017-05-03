@@ -12,6 +12,7 @@ public:
     Alien(QWidget *parent=0,Bullet* bullet = 0);
     void drawAlien(QPainter& paint);
     void updateCoordindates();
+    void generateNewNumber();
     int checkforCollisions();
     bool getGameOver();
     int getAlienBulletX();
@@ -30,7 +31,7 @@ private:
     int alienIndex;
     int alienDestroyed[55];
     int alienDirection;
-    int max;
+    int max[11];
     int phase;
     int numberDestroyed;
     QMediaPlayer* musicPlayer;
