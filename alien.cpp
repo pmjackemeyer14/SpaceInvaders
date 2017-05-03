@@ -212,8 +212,6 @@ void Alien::updateCoordindates()
                 if(ycord[i] > maxColumn1)
                 {
                     this->max[j] = i;
-                    qDebug()<<"MAX[j] = "<<this->max[j];
-                    qDebug()<<"J = "<<j;
                 }
             }
         }
@@ -227,6 +225,13 @@ void Alien::updateCoordindates()
 void Alien::generateNewNumber()
 {
     alienIndex = rand()%10;
+    int count = 0;
+    while(xcord[max[alienIndex]] == 0 && count < 100 )
+    {
+        alienIndex = rand()%10;
+        count++;
+    }
+
 }
 
 int Alien::checkforCollisions()
@@ -240,7 +245,9 @@ int Alien::checkforCollisions()
         }
         if(bullet->getBulletRect().intersects(aliens[i]))
         {
-
+            qDebug()<<"ALIEN DESTROYED:";
+            qDebug()<<"BULLET X: "<<bullet->getBulletRect().x();
+            qDebug()<<"BULLET Y: "<<bullet->getBulletRect().y();
             musicPlayerExplosion->setVolume(50);
             musicPlayerExplosion->play();
             indexOfShipdestroyed = i;
@@ -262,7 +269,7 @@ bool Alien::getGameOver()
 int Alien::getAlienBulletX()
 {
     int alienx = 0;
-    qDebug()<<"ALIEN INDEX: "<<alienIndex;
+
     switch(alienIndex)
     {
         case 0:  alienx = xcord[max[0]];
@@ -288,14 +295,12 @@ int Alien::getAlienBulletX()
         case 10: alienx = xcord[max[10]];
     }
 
-    qDebug()<<"ALIEN FIRING FROM X = "<<alienx;
     return alienx;
 }
 
 int Alien::getAlienBulletY()
 {
     int alieny = 0;
-    qDebug()<<"ALIEN INDEX: "<<alienIndex;
     switch(alienIndex)
     {
         case 0:  alieny = ycord[max[0]];
@@ -319,9 +324,7 @@ int Alien::getAlienBulletY()
         case 9:  alieny = ycord[max[9]];
         break;
         case 10: alieny = ycord[max[10]];
-        qDebug()<<"CHOOSE CASE 10 WITH INDEX OF"<<max[10];
     }
-    qDebug()<<"ALIEN FIRING FROM Y = "<<alieny;
     return alieny;
 }
 

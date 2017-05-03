@@ -204,9 +204,10 @@ void GameWindow::updateHighScores(QString name)
 
 void GameWindow::updateBulletCoordinates()
 {
-    int shipIndex = aliens->checkforCollisions();
     barrier->CheckforCollisions();
+    int shipIndex = aliens->checkforCollisions();
     bool ufoDestoyed = ufo->checkForCollisions();
+    qDebug()<<"CHECKING FOR COLLISIONS";
     if(bullet->getBulletYCord()<20 || bullet->getBulletCollision())
     {
         if(shipIndex>=0 && shipIndex <11)
@@ -226,7 +227,9 @@ void GameWindow::updateBulletCoordinates()
         bullet_timer->stop();
         shotFired = false;
     }
-    bullet->updateCoordinates();
+        bullet->updateCoordinates();
+
+
     this->update();
 }
 

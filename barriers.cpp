@@ -69,7 +69,7 @@ void Barriers::CheckforCollisions()
             qDebug()<<"COLLISION DETECTED ON BARRIER "<<i;
             hitCount[i]++;
             playerBullet->setCollision(true);
-            playerBullet->updateCoordinates();
+            //playerBullet->updateCoordinates();
 
         }
         if(barrier[i].intersects(alienBullet->getBulletRect()))
